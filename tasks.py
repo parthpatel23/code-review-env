@@ -23,9 +23,9 @@ class ReviewTask:
 
 
 def _keyword_match_score(identified: List[str], review: str, expected: List[str]) -> float:
-    """Score based on how many expected issues were found. Returns 0.0-1.0."""
+    """Score based on how many expected issues were found. Returns strictly between 0 and 1."""
     if not expected:
-        return 1.0
+        return 0.99
     review_lower = review.lower()
     combined = " ".join(identified).lower() + " " + review_lower
     found = 0
@@ -34,7 +34,9 @@ def _keyword_match_score(identified: List[str], review: str, expected: List[str]
         keywords = [k.strip().lower() for k in issue_keywords.split(",")]
         if any(kw in combined for kw in keywords):
             found += 1
-    return round(found / len(expected), 2)
+    raw = found / len(expected)
+    # Clamp to strictly between 0 and 1 (never exactly 0.0 or 1.0)
+    return round(max(0.01, min(0.99, raw)), 2)
 
 
 # ============================================================
