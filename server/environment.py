@@ -54,7 +54,7 @@ class CodeReviewEnvironment:
 
         return CodeReviewObservation(
             done=False,
-            reward=None,
+            reward=0.5,
             task_id=self._current_task.task_id,
             task_difficulty=self._current_task.difficulty,
             code_snippet=self._current_task.code_snippet,

@@ -5,3 +5,29 @@ description: >
   The agent reviews code snippets and identifies bugs, security vulnerabilities,
   and best-practice violations. Features 3 difficulty tiers (easy/medium/hard)
   with automated grading and partial-credit reward signals.
+
+tasks:
+  - task_id: easy_sql_injection
+    difficulty: easy
+    description: "Find SQL injection, missing input validation, and missing error handling in a Flask endpoint"
+    has_grader: true
+
+  - task_id: easy_hardcoded_secret
+    difficulty: easy
+    description: "Find hardcoded credentials, missing error handling, and missing input validation in an SMTP script"
+    has_grader: true
+
+  - task_id: medium_race_condition
+    difficulty: medium
+    description: "Find race conditions, non-atomic transfers, poor error signaling, and missing audit logging in a bank account class"
+    has_grader: true
+
+  - task_id: medium_path_traversal
+    difficulty: medium
+    description: "Find path traversal, missing file type validation, missing file size limits, and missing authentication in a file server"
+    has_grader: true
+
+  - task_id: hard_jwt_auth
+    difficulty: hard
+    description: "Find JWT none algorithm attack, weak secret, excessive token lifetime, bare except, missing bearer prefix, no rate limiting, and role manipulation in auth middleware"
+    has_grader: true
