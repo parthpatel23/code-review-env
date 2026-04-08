@@ -1,0 +1,7 @@
+name: code_review_env
+version: "1.0.0"
+description: >
+  An OpenEnv RL environment for training AI agents to perform code review.
+  The agent reviews code snippets and identifies bugs, security vulnerabilities,
+  and best-practice violations. Features 3 difficulty tiers (easy/medium/hard)
+  with automated grading and partial-credit reward signals.
