@@ -24,6 +24,16 @@ def _get_or_create_env(session_id: str) -> CodeReviewEnvironment:
     return _sessions[session_id]
 
 
+@app.get("/")
+def root():
+    return {
+        "name": "Code Review OpenEnv",
+        "version": "1.0.0",
+        "status": "healthy",
+        "endpoints": ["/health", "/reset", "/step", "/state", "/ws", "/docs"],
+    }
+
+
 @app.get("/health")
 def health():
     return {"status": "healthy"}
