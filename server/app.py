@@ -98,3 +98,13 @@ async def websocket_endpoint(websocket: WebSocket):
                 )
     except WebSocketDisconnect:
         _sessions.pop(session_id, None)
+
+
+def main():
+    """Entry point for `uv run server`."""
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+if __name__ == "__main__":
+    main()
