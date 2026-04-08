@@ -63,9 +63,12 @@ Be thorough. Check for: injection attacks, hardcoded secrets, race conditions,
 missing error handling, input validation, authentication issues, etc."""
 
 
-def env_reset() -> dict:
-    """Reset the environment via HTTP."""
-    resp = requests.post(f"{ENV_BASE_URL}/reset", json={})
+def env_reset(task_id=None) -> dict:
+    """Reset the environment via HTTP, optionally for a specific task."""
+    body = {"session_id": "default"}
+    if task_id:
+        body["task_id"] = task_id
+    resp = requests.post(f"{ENV_BASE_URL}/reset", json=body)
     resp.raise_for_status()
     return resp.json()
 
@@ -147,23 +150,45 @@ Identify all bugs, security vulnerabilities, and best-practice violations."""
     return result
 
 
+def get_tasks() -> list:
+    """Get list of available tasks from the environment."""
+    try:
+        resp = requests.get(f"{ENV_BASE_URL}/tasks")
+        resp.raise_for_status()
+        return resp.json().get("tasks", [])
+    except Exception:
+        return []
+
+
 def main():
-    """Main inference loop."""
+    """Main inference loop. Runs each task individually."""
     run_id = str(uuid.uuid4())[:8]
     start_time = time.time()
 
     print(f"[START] run_id={run_id} model={MODEL_NAME} env={ENV_BASE_URL}")
 
-    # Reset environment
-    obs = env_reset()
+    # Get all tasks
+    tasks = get_tasks()
     total_score = 0.0
     task_num = 0
 
-    while not obs.get("done", False):
-        task_num += 1
-        obs = run_task(obs, task_num)
-        score = obs.get("reward", 0.0) or obs.get("score", 0.0)
-        total_score += score
+    if tasks:
+        # Run each task individually
+        for task_info in tasks:
+            task_num += 1
+            tid = task_info["task_id"]
+            obs = env_reset(task_id=tid)
+            obs = run_task(obs, task_num)
+            score = obs.get("reward", 0.0) or obs.get("score", 0.0)
+            total_score += score
+    else:
+        # Fallback: run all tasks sequentially
+        obs = env_reset()
+        while not obs.get("done", False):
+            task_num += 1
+            obs = run_task(obs, task_num)
+            score = obs.get("reward", 0.0) or obs.get("score", 0.0)
+            total_score += score
 
     elapsed = time.time() - start_time
     avg_score = total_score / max(task_num, 1)

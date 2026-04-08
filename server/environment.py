@@ -32,14 +32,19 @@ class CodeReviewEnvironment:
         self._task_queue = []
         self._episode_scores = []
 
-    def reset(self, seed=None, episode_id=None, **kwargs) -> CodeReviewObservation:
-        """Start a new episode. Picks a random task."""
+    def reset(self, seed=None, episode_id=None, task_id=None, **kwargs) -> CodeReviewObservation:
+        """Start a new episode. Optionally specify a task_id to run a single task."""
         if seed is not None:
             random.seed(seed)
 
-        # Shuffle tasks for this episode
-        self._task_queue = list(ALL_TASKS)
-        random.shuffle(self._task_queue)
+        if task_id and task_id in TASKS_BY_ID:
+            # Single-task mode: run only the specified task
+            self._task_queue = [TASKS_BY_ID[task_id]]
+        else:
+            # Multi-task mode: shuffle all tasks
+            self._task_queue = list(ALL_TASKS)
+            random.shuffle(self._task_queue)
+
         self._current_task = self._task_queue[0]
         self._episode_scores = []
 

@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from models import CodeReviewAction
 from server.environment import CodeReviewEnvironment
+from tasks import ALL_TASKS, TASKS_BY_ID
 
 app = FastAPI(title="Code Review OpenEnv", version="1.0.0")
 
@@ -39,6 +40,24 @@ def health():
     return {"status": "healthy"}
 
 
+@app.get("/tasks")
+def list_tasks():
+    """List all available tasks with grader info."""
+    return {
+        "tasks": [
+            {
+                "task_id": t.task_id,
+                "difficulty": t.difficulty,
+                "language": t.language,
+                "context": t.context,
+                "has_grader": True,
+                "expected_issue_count": len(t.expected_issues),
+            }
+            for t in ALL_TASKS
+        ]
+    }
+
+
 @app.post("/reset")
 def reset_env(body: dict = None):
     body = body or {}
@@ -47,6 +66,7 @@ def reset_env(body: dict = None):
     obs = env.reset(
         seed=body.get("seed"),
         episode_id=body.get("episode_id"),
+        task_id=body.get("task_id"),
     )
     return obs.model_dump()
 
@@ -81,6 +101,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 obs = env.reset(
                     seed=msg.get("seed"),
                     episode_id=msg.get("episode_id"),
+                    task_id=msg.get("task_id"),
                 )
                 await websocket.send_text(json.dumps(obs.model_dump()))
 
