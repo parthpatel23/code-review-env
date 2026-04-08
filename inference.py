@@ -24,7 +24,7 @@ API_BASE_URL = os.environ.get("API_BASE_URL", "https://router.huggingface.co/hf-
 MODEL_NAME = os.environ.get("MODEL_NAME", "Qwen/Qwen2.5-Coder-32B-Instruct")
 HF_TOKEN = os.environ.get("HF_TOKEN")
 
-ENV_BASE_URL = os.environ.get("ENV_BASE_URL", "http://localhost:8000")
+ENV_BASE_URL = os.environ.get("ENV_BASE_URL", "https://parth-patel-23-code-review-env.hf.space")
 
 # ── OpenAI client (required by hackathon rules) ──────────────────
 client = OpenAI(
